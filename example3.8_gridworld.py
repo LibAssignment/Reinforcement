@@ -53,14 +53,28 @@ def random_action():
   return random.choice(action_space)
 
 #%%
+import seaborn as sns
+import numpy as np
+state = (0, 0)
+value_count = np.zeros(grid.size, dtype=int)
+value_acc = np.zeros(grid.size)
+value_count += 1
+for _ in range(100000):
+  new_state, value = move(grid, state, random_action())
+  value_count[state] += 1
+  value_acc[state] += value_acc[new_state]/value_count[new_state] * 0.9 + value
+  # print(state, values[state])
+  state = new_state
+sns.heatmap(value_acc/value_count)
+values = value_acc/value_count
+print(np.around(values, 2))
+print(value_count)
+
+#%%
+import seaborn as sns
 import numpy as np
 state = (0, 0)
 values = np.zeros(grid.size)
-# for _ in range(10000):
-#   new_state, value = move(grid, state, random_action())
-#   values[state] = values[new_state] * 0.9 + value
-#   # print(state, values[state])
-#   state = new_state
 for _ in range(1000):
   new_values = np.array(values, copy=True)
   for state, _ in np.ndenumerate(values):
@@ -71,4 +85,5 @@ for _ in range(1000):
     new_values[state] = np.mean(new_value)
   values[:] = new_values
 
+sns.heatmap(values)
 print(np.around(values, 2))
